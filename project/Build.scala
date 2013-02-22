@@ -12,7 +12,12 @@ object ApplicationBuild extends Build {
     javaCore,
     javaJdbc,
     javaEbean,
-    "org.apache.xmlgraphics" % "fop" % "1.0",
+    "avalon-framework" % "avalon-framework-api" % "4.2.0",
+    "avalon-framework" % "avalon-framework-impl" % "4.2.0",
+    "commons-codec" % "commons-codec" % "1.7",
+    "org.apache.xmlgraphics" % "fop" % "1.1" excludeAll(
+      ExclusionRule(organization = "org.apache.avalon.framework")
+      ),
     "net.sf.saxon" % "Saxon-HE" % "9.4"
   )
 

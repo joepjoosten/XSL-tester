@@ -1,8 +1,10 @@
 package controllers;
 
+import models.Fiddle;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.lib.FeatureKeys;
 import net.sf.saxon.lib.StandardErrorListener;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
@@ -28,27 +30,12 @@ import java.io.PrintStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 
+import static org.apache.commons.codec.binary.Base64.*;
+
 public class Application extends Controller {
 
     private static final FopFactory fopFactory = FopFactory.newInstance();
     private static final TransformerFactory transformerFactory = TransformerFactory.newInstance();
-
-    public static final String DEFAULT_XML =
-            "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n" +
-                    "<root></root>";
-    public static final String DEFAULT_XSL =
-            "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n" +
-                    "<xsl:transform xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\" version=\"2.0\">\n" +
-                    "<xsl:output indent=\"yes\"/>" +
-                    "    <xsl:template match=\"@*|node()\">\n" +
-                    "        <xsl:copy>\n" +
-                    "            <xsl:apply-templates select=\"@*|node()\"/>\n" +
-                    "        </xsl:copy>\n" +
-                    "    </xsl:template>\n" +
-                    "</xsl:transform>";
-    public static final String DEFAULT_RESULT =
-            "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>";
-
     public static class Files {
 
         public String xml;
@@ -62,8 +49,12 @@ public class Application extends Controller {
         return ok(
                 Routes.javascriptRouter("jsRoutes",
                     controllers.routes.javascript.Application.transform(),
+                    controllers.routes.javascript.Application.pdf(),
+                    controllers.routes.javascript.Application.save(),
                     controllers.routes.javascript.Application.defaultXML(),
-                    controllers.routes.javascript.Application.defaultXSL()
+                    controllers.routes.javascript.Application.defaultXSL(),
+                    controllers.routes.javascript.Application.xml(),
+                    controllers.routes.javascript.Application.xsl()
                 )
         );
     }
@@ -76,6 +67,9 @@ public class Application extends Controller {
     }
     public static Result index() {
         return ok(index.render(""));
+    }
+    public static Result fiddle(String id) {
+        return ok(index.render(id));
     }
 
     public static Result transform() {
@@ -113,18 +107,39 @@ public class Application extends Controller {
     public static Result pdf() {
         Form<Files> filesForm = Form.form(Files.class).bindFromRequest();
         Files files = filesForm.get();
-
+        Transformer transformer;
         try {
             ByteArrayOutputStream pdf = new ByteArrayOutputStream();
             Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, pdf);
-            Transformer transformer = transformerFactory.newTransformer();
+            transformer = transformerFactory.newTransformer();
             transformer.transform(new StreamSource(new StringReader(files.result)), new SAXResult(fop.getDefaultHandler()));
-            return ok(pdf.toByteArray()).as("application/pdf");
+            return ok(pdf.toByteArray());
         } catch (TransformerException e) {
-            return ok(index.render("An error occurred rendering the PDF."));
+            return badRequest("An error occurred rendering the PDF: " + e.getMessage());
         } catch (FOPException e) {
-            return ok(index.render("An error occurred rendering the PDF."));
+            return badRequest("An error occurred rendering the PDF: " + e.getMessage());
         }
     }
+
+    public static Result save() {
+        Form<Files> filesForm = Form.form(Files.class).bindFromRequest();
+        Files files = filesForm.get();
+
+        Fiddle f = new Fiddle();
+        f.setXml(files.xml);
+        f.setXsl(files.xsl);
+        f.save();
+
+        return ok(f.getId().toString());
+    }
+
+    public static Result xml(String id){
+        return ok(Fiddle.find.byId(id).getXml());
+    }
+    public static Result xsl(String id){
+        return ok(Fiddle.find.byId(id).getXsl());
+    }
+
+
 
 }
