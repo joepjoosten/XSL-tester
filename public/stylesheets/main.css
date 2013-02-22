@@ -1,0 +1,153 @@
+html {
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    position:relative;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    background-color: #272822;
+}
+
+#xmleditor, #xsleditor, #resulteditor {
+    -moz-box-flex:1.0; /* Firefox */
+    -webkit-box-flex:1.0; /* Safari and Chrome */
+    box-flex:1.0;
+    position: relative;
+}
+
+#xmleditor:after {
+    content: "XML";
+    position: absolute;
+    z-index: 10000;
+    right: 14px;
+    top: 20px;
+    background-color: rgba(255, 255, 255, 0.5);
+    padding: 1em;
+}
+
+#xsleditor:after {
+    content: "XSL";
+    position: absolute;
+    z-index: 10000;
+    right: 14px;
+    top: 20px;
+    background-color: rgba(255, 255, 255, 0.5);
+    padding: 1em;
+}
+
+#resulteditor:after {
+    content: "Result";
+    position: absolute;
+    z-index: 10000;
+    right: 14px;
+    top: 20px;
+    background-color: rgba(255, 255, 255, 0.5);
+    padding: 1em;
+}
+
+body div:last-child {
+    border-bottom: none !important;
+    border-right: none !important;
+}
+
+@media screen and (min-width: 0px) and (max-width:1199px) {
+    body {
+        display:-moz-box; /* Firefox */
+        display:-webkit-box; /* Safari and Chrome */
+        display:box;
+        -webkit-box-orient: vertical;
+        -moz-box-orient: vertical;
+        box-orient: vertical;
+    }
+
+    #xmleditor, #xsleditor, #resulteditor {
+        width: 100%;
+        border-bottom: 2px solid #F8F8F2;
+    }
+
+    #resulteditor {
+        border-bottom: none;
+    }
+}
+
+@media screen and (min-width: 1200px) and (max-width:1799px) {
+    body {
+        display:-moz-flex; /* Firefox */
+        display:-webkit-flex; /* Safari and Chrome */
+        display:flex;
+        -webkit-flex-direction: column;
+        -webkit-flex-wrap: wrap;
+        -moz-flex-direction: column;
+        -moz-flex-wrap: wrap;
+        flex-direction: column;
+        flex-wrap: wrap;
+    }
+
+    #xmleditor {
+        -moz-flex:49% 1; /* Firefox */
+        -webkit-flex:49% 1; /* Safari and Chrome */
+        flex:49% 1;
+        -webkit-order: 1;
+        -moz-order: 1;
+        order: 1;
+        border-bottom: 2px solid #F8F8F2;
+    }
+    #xsleditor {
+        -moz-flex:49% 1; /* Firefox */
+        -webkit-flex:49% 1; /* Safari and Chrome */
+        flex:49% 1;
+        border-left: 2px solid #F8F8F2;
+        -webkit-order: 3;
+        -moz-order: 3;
+        order: 3;
+    }
+    #resulteditor {
+        -moz-flex:49% 1; /* Firefox */
+        -webkit-flex:49% 1; /* Safari and Chrome */
+        flex:49% 1;
+        -webkit-order: 2;
+        -moz-order: 2;
+        order: 2;
+    }
+}
+
+@media screen and (min-width: 1800px) {
+    body {
+        display:-moz-box; /* Firefox */
+        display:-webkit-box; /* Safari and Chrome */
+        display:box;
+        -webkit-box-orient: horizontal;
+        -moz-box-orient: horizontal;
+        box-orient: horizontal;
+    }
+
+    #xmleditor, #xsleditor, #resulteditor {
+        height: 100%;
+        border-right: 2px solid #F8F8F2;
+    }
+
+    #resulteditor {
+        border-right: none;
+    }
+}
+
+#actions {
+    position: absolute;
+    z-index: 10000;
+    padding: 1em;
+    background-color: rgba(255, 255, 255, 0.5);
+    right: 14px;
+    bottom: 20px;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Droid Sans Mono', 'Consolas', monospace;
+    font-size: 12px;
+    text-align: right;
+}
+
+#actions a:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}

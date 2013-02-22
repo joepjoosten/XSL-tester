@@ -3,14 +3,18 @@ package controllers;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.lib.FeatureKeys;
 import net.sf.saxon.lib.StandardErrorListener;
-
-import org.apache.fop.apps.*;
-
+import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.Fop;
+import org.apache.fop.apps.FopFactory;
+import org.apache.fop.apps.MimeConstants;
 import org.xml.sax.InputSource;
+import play.Routes;
 import play.data.Form;
-import play.mvc.*;
-
-import views.html.*;
+import play.mvc.Controller;
+import play.mvc.Result;
+import views.html.index;
+import views.xml.defaultXML;
+import views.xml.defaultXSL;
 
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -19,7 +23,10 @@ import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.io.StringReader;
+import java.io.StringWriter;
 
 public class Application extends Controller {
 
@@ -28,16 +35,17 @@ public class Application extends Controller {
 
     public static final String DEFAULT_XML =
             "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n" +
-            "<root></root>";
+                    "<root></root>";
     public static final String DEFAULT_XSL =
             "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n" +
-            "<xsl:transform xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\" version=\"2.0\">\n" +
-            "    <xsl:template match=\"@*|node()\">\n" +
-            "        <xsl:copy>\n" +
-            "            <xsl:apply-templates select=\"@*|node()\"/>\n" +
-            "        </xsl:copy>\n" +
-            "    </xsl:template>\n" +
-            "</xsl:transform>";
+                    "<xsl:transform xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\" version=\"2.0\">\n" +
+                    "<xsl:output indent=\"yes\"/>" +
+                    "    <xsl:template match=\"@*|node()\">\n" +
+                    "        <xsl:copy>\n" +
+                    "            <xsl:apply-templates select=\"@*|node()\"/>\n" +
+                    "        </xsl:copy>\n" +
+                    "    </xsl:template>\n" +
+                    "</xsl:transform>";
     public static final String DEFAULT_RESULT =
             "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>";
 
@@ -49,9 +57,25 @@ public class Application extends Controller {
         public String result;
 
     }
+    public static Result jsRoutes() {
+        response().setContentType("text/javascript");
+        return ok(
+                Routes.javascriptRouter("jsRoutes",
+                    controllers.routes.javascript.Application.transform(),
+                    controllers.routes.javascript.Application.defaultXML(),
+                    controllers.routes.javascript.Application.defaultXSL()
+                )
+        );
+    }
 
+    public static Result defaultXML(){
+        return ok(defaultXML.render());
+    }
+    public static Result defaultXSL(){
+        return ok(defaultXSL.render());
+    }
     public static Result index() {
-        return ok(index.render(DEFAULT_XML, DEFAULT_XSL, DEFAULT_RESULT));
+        return ok(index.render(""));
     }
 
     public static Result transform() {
@@ -83,7 +107,7 @@ public class Application extends Controller {
             resultWriter.write(errors.toString());
         }
 
-        return ok(index.render(files.xml, files.xsl, resultWriter.toString()));
+        return ok(resultWriter.toString());
     }
 
     public static Result pdf() {
@@ -97,10 +121,10 @@ public class Application extends Controller {
             transformer.transform(new StreamSource(new StringReader(files.result)), new SAXResult(fop.getDefaultHandler()));
             return ok(pdf.toByteArray()).as("application/pdf");
         } catch (TransformerException e) {
-            return ok(index.render(files.xml, files.xsl, "An error occurred rendering the PDF."));
+            return ok(index.render("An error occurred rendering the PDF."));
         } catch (FOPException e) {
-            return ok(index.render(files.xml, files.xsl, "An error occurred rendering the PDF."));
+            return ok(index.render("An error occurred rendering the PDF."));
         }
     }
-  
+
 }

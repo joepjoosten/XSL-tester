@@ -10,3 +10,7 @@ POST    /pdf                        controllers.Application.pdf()
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
+
+GET     /jsRoutes                   controllers.Application.jsRoutes()
+GET     /default/xml                   controllers.Application.defaultXML()
+GET     /default/xsl                   controllers.Application.defaultXSL()
