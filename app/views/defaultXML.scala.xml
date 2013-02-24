@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" font-family="sans-serif" font-size="10pt">
+    <fo:layout-master-set>
+        <fo:simple-page-master master-name="portrait" page-width="210mm" page-height="297mm" margin-left="25mm"
+                               margin-right="25mm" margin-top="10mm" margin-bottom="10mm">
+            <fo:region-body region-name="body" margin-top="25mm" margin-bottom="25mm"/>
+        </fo:simple-page-master>
+    </fo:layout-master-set>
+
+    <fo:page-sequence master-reference="portrait">
+        <fo:flow flow-name="body">
+            <fo:block>
+                Hello transformers!
+            </fo:block>
+        </fo:flow>
+    </fo:page-sequence>
+</fo:root>
