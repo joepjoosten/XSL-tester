@@ -1,8 +1,8 @@
 $ = jQuery
 doneTypingInterval = 1000;
 typingTimer = null;
+autotransform = true;
 transform = () ->
-  console.log $("#files").serialize()
   jsRoutes.controllers.Application.transform().ajax(
     data: $("#files").serialize()
     success: (data) ->
@@ -20,11 +20,12 @@ xmleditor.getSession().on(
   'change'
   ->
     $("#xml").val xmleditor.getSession().getValue()
-    clearTimeout typingTimer
-    typingTimer = setTimeout(
-      transform
-      doneTypingInterval
-    )
+    if autotransform
+      clearTimeout typingTimer
+      typingTimer = setTimeout(
+        transform
+        doneTypingInterval
+      )
   )
 
 xsleditor = ace.edit "xsleditor"
@@ -35,24 +36,37 @@ xsleditor.getSession().on(
   'change'
   ->
     $("#xsl").val xsleditor.getSession().getValue()
-    clearTimeout typingTimer
-    typingTimer = setTimeout(
-      transform
-      doneTypingInterval
-    )
+    if autotransform
+      clearTimeout typingTimer
+      typingTimer = setTimeout(
+        transform
+        doneTypingInterval
+      )
 )
 
 resulteditor = ace.edit "resulteditor"
 resulteditor.setTheme  "ace/theme/monokai"
 resulteditor.getSession().setMode  "ace/mode/xml"
 
+$("#autotransform").click ->
+  autotransform = !autotransform;
+  $("#autotransform").find("i").toggleClass("icon-check");
+  $("#autotransform").find("i").toggleClass("icon-check-empty");
+
+
+$("#new").click ->
+  reset()
+
 $("#transform").click ->
-  transform()
+  if !autotransform
+    transform()
 $("#save").click ->
   jsRoutes.controllers.Application.save().ajax(
     data: $("#files").serialize()
     success: (data) ->
-     console.log(data);
+     window.history.pushState("", "XSL Transform", "/f/"+data[0]+"/"+data[1]);
+     $("#id_slug").val(data[0]);
+     $("#save").find("span").html("Update");
     error: (err) ->
       console.log err
       $("#alert").find("h4").html("Save oeps");
@@ -67,50 +81,54 @@ $("#save").click ->
   )
 
 $("#pdf").click ->
-  jsRoutes.controllers.Application.pdf().ajax(
-    data: $("#files").serialize()
+  $("#files").get(0).target = "_blank";
+  $("#files").get(0).action = jsRoutes.controllers.Application.pdf().url;
+  $("#files").get(0).submit();
+
+reset = ->
+  $("#save").find("span").html("Save");
+  $("#id_slug").val("");
+  jsRoutes.controllers.Application.defaultXML().ajax(
+    dataType: 'text'
     success: (data) ->
-      window.open(
-        'data:application/pdf;base64,' + data
-        '_blank'
-      );
-    error: (err) ->
-      console.log err
-      $("#alert").find("h4").html("PDF Generation Error!");
-      $("#alert").find("p").html(err.responseText);
-      $("#alert").alert();
-      $("#alert").slideDown();
-      setTimeout(
-        ->
-          $('#alert').slideUp()
-        4000
-      )
-  )
+      xmleditor.getSession().setValue data
+      $("#xml").val(data)
+  );
+  jsRoutes.controllers.Application.defaultXSL().ajax(
+    dataType: 'text'
+    success: (data) ->
+      xsleditor.getSession().setValue data
+      $("#xsl").val(data)
+  );
+  window.history.pushState("", "XSL Transform", "/");
 
 $ ->
-  if url != ""
-    jsRoutes.controllers.Application.xml(url).ajax(
+  if id != ""
+    $("#save").find("span").html("Update");
+
+    jsRoutes.controllers.Application.xml(id,revision).ajax(
       dataType: 'text'
       success: (data) ->
         xmleditor.getSession().setValue data
         $("#xml").val(data)
     );
-    jsRoutes.controllers.Application.xsl(url).ajax(
+    jsRoutes.controllers.Application.xsl(id,revision).ajax(
       dataType: 'text'
       success: (data) ->
         xsleditor.getSession().setValue data
         $("#xsl").val(data)
     );
   else
-    jsRoutes.controllers.Application.defaultXML().ajax(
-      dataType: 'text'
-      success: (data) ->
-        xmleditor.getSession().setValue data
-        $("#xml").val(data)
-    );
-    jsRoutes.controllers.Application.defaultXSL().ajax(
-      dataType: 'text'
-      success: (data) ->
-        xsleditor.getSession().setValue data
-        $("#xsl").val(data)
-    );
+    reset()
+
+
+
+  clip = new ZeroClipboard($("#copyclipboard"), { moviePath: "/assets/flash/ZeroClipboard.swf" })
+  clip.glue($("#copyclipboard"));
+
+$("#copyclipboard").on(
+  'mouseover'
+  (event) ->
+    $("#copyclipboard").attr("data-clipboard-text",""+window.location);
+
+)

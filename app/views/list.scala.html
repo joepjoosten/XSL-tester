@@ -1,0 +1,19 @@
+@(fiddles: List[Fiddle])
+
+    <ul>
+    @fiddles.map {f =>
+    <li>
+         @f.getShortId
+        <ul>
+            <li>Revisions</li>
+            @f.getFiddleRevisionList.map {r =>
+                <li>
+                    <a href="@routes.Application.fiddle(f.getShortId, r.getRevision)"> @r.getRevision </a>
+                </li>
+            }
+        </ul>
+
+    </li>
+    }
+    </ul>
+
