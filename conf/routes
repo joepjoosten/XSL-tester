@@ -6,6 +6,7 @@
 
 GET     /                    controllers.Application.index()
 GET     /f/:id                    controllers.Application.fiddle(id)
+GET     /list                    controllers.Application.list()
 POST    /                           controllers.Application.transform()
 POST    /pdf                        controllers.Application.pdf()
 POST    /save                        controllers.Application.save()
@@ -14,8 +15,8 @@ POST    /save                        controllers.Application.save()
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
 
 GET     /jsRoutes                   controllers.Application.jsRoutes()
-GET     /xml/$id<[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-4[A-Fa-f0-9]{3}-[ABab89][A-Fa-f0-9]{3}-[A-Fa-f0-9]{12}>                    controllers.Application.xml(id)
-GET     /xsl/$id<[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-4[A-Fa-f0-9]{3}-[ABab89][A-Fa-f0-9]{3}-[A-Fa-f0-9]{12}>                   controllers.Application.xsl(id)
+GET     /xml/:id                   controllers.Application.xml(id)
+GET     /xsl/:id                   controllers.Application.xsl(id)
 GET     /xml                        controllers.Application.defaultXML()
 GET     /xsl                        controllers.Application.defaultXSL()
 

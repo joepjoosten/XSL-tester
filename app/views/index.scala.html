@@ -1,9 +1,9 @@
-@(error: String)
+@(url: String)
 @import collection.convert.WrapAsJava
 
 @main("XSL Tester") {
     <script>
-            var url = "@error";
+            var url = "@url";
     </script>
         <div id="xmleditor"></div>
         <div id="xsleditor"></div>
