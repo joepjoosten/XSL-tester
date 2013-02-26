@@ -1,15 +1,18 @@
-@(url: String)
+@(id: String = "", revision:Int = 0)
 @import collection.convert.WrapAsJava
 
-@main("XSL Tester") {
+@main("XSL Transform") {
     <script>
-            var url = "@url";
+            var id = "@id";
+            var revision = "@revision";
     </script>
         <div id="xmleditor"></div>
         <div id="xsleditor"></div>
         <div id="resulteditor"></div>
 
             <form id="files" method="post" style="display: none;">
+                <input type="hidden" id="id_slug" name="id_slug" value="@id" />
+                <input type="hidden" id="revision_id" name="revision_id" value="@revision" />
                 <textarea id="xml" name="xml"></textarea>
                 <textarea id="xsl" name="xsl"></textarea>
                 <textarea id="result" name="result"></textarea>

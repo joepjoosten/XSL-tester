@@ -11,6 +11,7 @@ import org.apache.fop.apps.MimeConstants;
 import org.xml.sax.InputSource;
 import play.Routes;
 import play.data.Form;
+import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 import views.html.index;
@@ -37,7 +38,7 @@ public class Application extends Controller {
     private static final TransformerFactory transformerFactory = TransformerFactory.newInstance();
 
     public static class Files {
-
+        public String id_slug;
         public String xml;
         public String xsl;
         public String systemId;
@@ -69,13 +70,13 @@ public class Application extends Controller {
     }
 
     public static Result index() {
-        return ok(index.render(""));
+        return ok(index.render("",0));
     }
 
-    public static Result fiddle(String shortid) {
+    public static Result fiddle(String shortid, int revisionId) {
 
 
-        return ok(index.render(shortid));
+        return ok(index.render(shortid, revisionId));
     }
 
     public static Result transform() {
@@ -119,7 +120,7 @@ public class Application extends Controller {
             Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, pdf);
             transformer = transformerFactory.newTransformer();
             transformer.transform(new StreamSource(new StringReader(files.result)), new SAXResult(fop.getDefaultHandler()));
-            return ok(pdf.toByteArray());
+            return ok(pdf.toByteArray()).as("application/pdf");
         } catch (TransformerException e) {
             return badRequest("An error occurred rendering the PDF: " + e.getMessage());
         } catch (FOPException e) {
@@ -130,24 +131,36 @@ public class Application extends Controller {
     public static Result save() {
         Form<Files> filesForm = Form.form(Files.class).bindFromRequest();
         Files files = filesForm.get();
+        Fiddle f;
+        if("".equals(files.id_slug)){
+            f = new Fiddle();
+        } else {
+            f = Fiddle.getByShortId(files.id_slug);
+        }
 
-        Fiddle f = new Fiddle();
-        f.setXml(files.xml);
-        f.setXsl(files.xsl);
+        f.addRevision(files.xml, files.xsl);
+
         f.save();
+        String[] res = new String[2];
+        res[0] = String.valueOf(f. getShortId());
+        res[1] = String.valueOf(f.getFiddleRevisionList().size()-1);
 
-        return ok(String.valueOf(f.getId()));
+        return ok(Json.toJson(res));
     }
 
-    public static Result xml(String id) {
+    public static Result xml(String id, int revision) {
 
         String shortid = String.valueOf(Fiddle.decodeShortenedID(id));
-        return ok(Fiddle.find.byId(shortid).getXml());
+
+        Fiddle res = Fiddle.find.where().eq("id", shortid).findUnique();
+
+        return ok(res.getFiddleRevision(revision).getXml());
     }
 
-    public static Result xsl(String id) {
+    public static Result xsl(String id, int revision) {
         String shortid = String.valueOf(Fiddle.decodeShortenedID(id));
-        return ok(Fiddle.find.byId(shortid).getXsl());
+        Fiddle res = Fiddle.find.where().eq("id", shortid).findUnique();
+        return ok(res.getFiddleRevision(revision).getXsl());
     }
 
     public static Result list() {
