@@ -12,6 +12,7 @@ object ApplicationBuild extends Build {
     javaCore,
     javaJdbc,
     javaEbean,
+    "mysql" % "mysql-connector-java" % "5.1.18",
     "avalon-framework" % "avalon-framework-api" % "4.2.0",
     "avalon-framework" % "avalon-framework-impl" % "4.2.0",
     "commons-codec" % "commons-codec" % "1.7",
