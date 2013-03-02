@@ -142,7 +142,7 @@ public class Application extends Controller {
 
         f.save();
         String[] res = new String[2];
-        res[0] = String.valueOf(f. getShortId());
+        res[0] = String.valueOf(f.getShortId());
         res[1] = String.valueOf(f.getFiddleRevisionList().size()-1);
 
         return ok(Json.toJson(res));
