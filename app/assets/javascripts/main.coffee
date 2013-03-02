@@ -64,7 +64,7 @@ $("#save").click ->
   jsRoutes.controllers.Application.save().ajax(
     data: $("#files").serialize()
     success: (data) ->
-     window.history.pushState("", "XSL Transform", "/f/"+data[0]+"/"+data[1]);
+     window.history.pushState("", "XSL Transform", "/"+data[0]+"/"+data[1]);
      $("#id_slug").val(data[0]);
      $("#save").find("span").html("Update");
     error: (err) ->
