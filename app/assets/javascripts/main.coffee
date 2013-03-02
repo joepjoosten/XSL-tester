@@ -64,7 +64,7 @@ $("#save").click ->
   jsRoutes.controllers.Application.save().ajax(
     data: $("#files").serialize()
     success: (data) ->
-      if data[1] == 0
+      if data[1] == "0"
         window.history.pushState("", "XSL Transform", "/" + data[0]);
       else
         window.history.pushState("", "XSL Transform", "/" + data[0] + "/" + data[1]);
