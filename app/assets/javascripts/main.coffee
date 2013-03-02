@@ -13,8 +13,8 @@ transform = () ->
   )
 
 xmleditor = ace.edit "xmleditor"
-xmleditor.setTheme  "ace/theme/monokai"
-xmleditor.getSession().setMode  "ace/mode/xml"
+xmleditor.setTheme "ace/theme/monokai"
+xmleditor.getSession().setMode "ace/mode/xml"
 xmleditor.getSession().setValue $("xml").val()
 xmleditor.getSession().on(
   'change'
@@ -26,11 +26,11 @@ xmleditor.getSession().on(
         transform
         doneTypingInterval
       )
-  )
+)
 
 xsleditor = ace.edit "xsleditor"
-xsleditor.setTheme  "ace/theme/monokai"
-xsleditor.getSession().setMode  "ace/mode/xml"
+xsleditor.setTheme "ace/theme/monokai"
+xsleditor.getSession().setMode "ace/mode/xml"
 xsleditor.getSession().setValue $("xsl").val()
 xsleditor.getSession().on(
   'change'
@@ -45,8 +45,8 @@ xsleditor.getSession().on(
 )
 
 resulteditor = ace.edit "resulteditor"
-resulteditor.setTheme  "ace/theme/monokai"
-resulteditor.getSession().setMode  "ace/mode/xml"
+resulteditor.setTheme "ace/theme/monokai"
+resulteditor.getSession().setMode "ace/mode/xml"
 
 $("#autotransform").click ->
   autotransform = !autotransform;
@@ -64,9 +64,12 @@ $("#save").click ->
   jsRoutes.controllers.Application.save().ajax(
     data: $("#files").serialize()
     success: (data) ->
-     window.history.pushState("", "XSL Transform", "/"+data[0]+"/"+data[1]);
-     $("#id_slug").val(data[0]);
-     $("#save").find("span").html("Update");
+      if data[1] == 0
+        window.history.pushState("", "XSL Transform", "/" + data[0]);
+      else
+        window.history.pushState("", "XSL Transform", "/" + data[0] + "/" + data[1]);
+      $("#id_slug").val(data[0]);
+      $("#save").find("span").html("Update");
     error: (err) ->
       console.log err
       $("#alert").find("h4").html("Save oeps");
@@ -106,13 +109,13 @@ $ ->
   if id != ""
     $("#save").find("span").html("Update");
 
-    jsRoutes.controllers.Application.xml(id,revision).ajax(
+    jsRoutes.controllers.Application.xml(id, revision).ajax(
       dataType: 'text'
       success: (data) ->
         xmleditor.getSession().setValue data
         $("#xml").val(data)
     );
-    jsRoutes.controllers.Application.xsl(id,revision).ajax(
+    jsRoutes.controllers.Application.xsl(id, revision).ajax(
       dataType: 'text'
       success: (data) ->
         xsleditor.getSession().setValue data
@@ -122,13 +125,12 @@ $ ->
     reset()
 
 
-
   clip = new ZeroClipboard($("#copyclipboard"), { moviePath: "/assets/flash/ZeroClipboard.swf" })
   clip.glue($("#copyclipboard"));
 
 $("#copyclipboard").on(
   'mouseover'
   (event) ->
-    $("#copyclipboard").attr("data-clipboard-text",""+window.location);
+    $("#copyclipboard").attr("data-clipboard-text", "" + window.location);
 
 )
