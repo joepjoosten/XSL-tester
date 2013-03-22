@@ -35,7 +35,7 @@ import java.util.List;
 public class Application extends Controller {
 
     private static final FopFactory fopFactory = FopFactory.newInstance();
-    private static final TransformerFactory transformerFactory = TransformerFactory.newInstance();
+    private static final TransformerFactory transformerFactory = TransformerFactory.newInstance("net.sf.saxon.TransformerFactoryImpl", null);
 
     public static class Files {
         public String id_slug;
