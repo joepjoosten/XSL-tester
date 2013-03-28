@@ -17,7 +17,11 @@
     <div class="navbar">
         <div class="navbar-inner">
             <div class="container">
-
+                <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </a>
                 <a class="brand" href="@routes.Application.index()"> <i class="icon-cogs icon-large"></i> @title </a>
                 <div class="nav-collapse">
                     <ul class="nav">
@@ -54,11 +58,11 @@
                             </ul>
                         </li>
                     </ul>
-                    <ul class="nav pull-right">
-                        <li> <a href="//github.com/joepjoosten/XSL-Tester"> <i class="icon-github icon-large"></i> Fork me! </a> </li>
-                        <li class="ihomer"> <a href="http://www.ihomer.nl" target="_blank" title="IHomer: een beetje anders, een groot verschil"> <img width="20px" src="@routes.Assets.at("images/ihomer.svg")" /> </a> </li>
-                    </ul>
                 </div> <!-- /.nav-collapse -->
+                <ul class="nav pull-right logo">
+                    <li> <a href="//github.com/joepjoosten/XSL-Tester"> <i class="icon-github icon-large"></i> Fork me! </a> </li>
+                    <li class="ihomer"> <a href="http://www.ihomer.nl" target="_blank" title="IHomer: een beetje anders, een groot verschil"> <img width="20px" src="@routes.Assets.at("images/ihomer.svg")" /> </a> </li>
+                </ul>
             </div> <!-- /.container -->
         </div> <!-- /.navbar-inner -->
     </div> <!-- /.navbar -->

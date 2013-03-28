@@ -6,17 +6,21 @@
             var id = "@id";
             var revision = "@revision";
     </script>
+
+    <div class="inner">
         <div id="xmleditor"></div>
         <div id="xsleditor"></div>
         <div id="resulteditor"></div>
 
-            <form id="files" method="post" style="display: none;">
-                <input type="hidden" id="id_slug" name="id_slug" value="@id" />
-                <input type="hidden" id="revision_id" name="revision_id" value="@revision" />
-                <textarea id="xml" name="xml"></textarea>
-                <textarea id="xsl" name="xsl"></textarea>
-                <textarea id="result" name="result"></textarea>
-            </form>
+        <form id="files" method="post" style="display: none;">
+            <input type="hidden" id="id_slug" name="id_slug" value="@id" />
+            <input type="hidden" id="revision_id" name="revision_id" value="@revision" />
+            <textarea id="xml" name="xml"></textarea>
+            <textarea id="xsl" name="xsl"></textarea>
+            <textarea id="result" name="result"></textarea>
+        </form>
+    </div>
+
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" type="text/javascript"></script>
     <script src="//d1n0x3qji82z53.cloudfront.net/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
 }
