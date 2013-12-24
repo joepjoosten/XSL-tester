@@ -50,8 +50,8 @@ resulteditor.getSession().setMode "ace/mode/xml"
 
 $("#autotransform").click ->
   autotransform = !autotransform;
-  $("#autotransform").find("i").toggleClass("icon-check");
-  $("#autotransform").find("i").toggleClass("icon-check-empty");
+  $("#autotransform").find("i").toggleClass("fa-check-square-o");
+  $("#autotransform").find("i").toggleClass("fa-square-o");
 
 
 $("#new").click ->
@@ -87,6 +87,15 @@ $("#pdf").click ->
   $("#files").get(0).target = "_blank";
   $("#files").get(0).action = jsRoutes.controllers.Application.pdf().url;
   $("#files").get(0).submit();
+
+$("#engines a").click ->
+  `engine = $(this).data('engine');`
+  updateEngine()
+  transform()
+
+updateEngine = ->
+  $('#engine').val engine
+  $('#engine-dropdown').text $('a[data-engine="'+engine+'"]').text()
 
 reset = ->
   $("#save").find("span").html("Save");
@@ -124,9 +133,10 @@ $ ->
   else
     reset()
 
-
   clip = new ZeroClipboard($("#copyclipboard"), { moviePath: "/assets/flash/ZeroClipboard.swf" })
   clip.glue($("#copyclipboard"));
+
+  updateEngine()
 
 $("#copyclipboard").on(
   'mouseover'

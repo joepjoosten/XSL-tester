@@ -40,11 +40,12 @@ public class Fiddle extends Model {
         this.fiddleRevisionList.add(fiddleRevision);
     }
 
-    public void addRevision(String xml, String xsl){
+    public void addRevision(String xml, String xsl, String engine){
         FiddleRevision fiddleRevision = new FiddleRevision();
         fiddleRevision.setRevision(fiddleRevisionList.size());
         fiddleRevision.setXml(xml);
         fiddleRevision.setXsl(xsl);
+        fiddleRevision.setEngine(engine);
         this.addFiddleRevision(fiddleRevision);
     }
 

@@ -1,9 +1,11 @@
 package controllers;
 
 import models.Fiddle;
-import net.sf.saxon.Configuration;
-import net.sf.saxon.lib.FeatureKeys;
-import net.sf.saxon.lib.StandardErrorListener;
+import models.FiddleRevision;
+import net.xsltransform.plugin.Saxon6Plugin;
+import net.xsltransform.plugin.TransformerPlugin;
+import net.xsltransform.plugin.Saxon9Plugin;
+import net.xsltransform.plugin.Xalan2Plugin;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
@@ -21,21 +23,29 @@ import views.xml.defaultXSL;
 
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Application extends Controller {
 
-    private static final FopFactory fopFactory = FopFactory.newInstance();
-    private static final TransformerFactory transformerFactory = TransformerFactory.newInstance("net.sf.saxon.TransformerFactoryImpl", null);
+    private static final FopFactory FOP_FACTORY = FopFactory.newInstance();
+
+    private static final Map<String, TransformerPlugin> PLUGINS;
+    static {
+        PLUGINS = new HashMap<>();
+        PLUGINS.put("Saxon9", new Saxon9Plugin());
+        PLUGINS.put("Saxon6", new Saxon6Plugin());
+        PLUGINS.put("Xalan2", new Xalan2Plugin());
+    }
+    private static final String DEFAULT_ENGINE = "Saxon9";
 
     public static class Files {
         public String id_slug;
@@ -43,7 +53,7 @@ public class Application extends Controller {
         public String xsl;
         public String systemId;
         public String result;
-
+        public String engine;
     }
 
     public static Result jsRoutes() {
@@ -70,24 +80,16 @@ public class Application extends Controller {
     }
 
     public static Result index() {
-        return ok(index.render("",0));
+        return ok(index.render("", 0, DEFAULT_ENGINE));
     }
 
-    public static Result fiddle(String shortid, int revisionId) {
-
-
-        return ok(index.render(shortid, revisionId));
+    public static Result fiddle(String shortId, int revisionId) {
+        return ok(index.render(shortId, revisionId, Fiddle.getByShortId(shortId).getFiddleRevision(revisionId).getEngine()));
     }
 
     public static Result transform() {
         Form<Files> filesForm = Form.form(Files.class).bindFromRequest();
         Files files = filesForm.get();
-
-        // Redirect error listener to errors byte stream to give user feedback on input
-        Configuration conf = (Configuration) transformerFactory.getAttribute(FeatureKeys.CONFIGURATION);
-        StandardErrorListener errorListener = (StandardErrorListener) conf.getErrorListener();
-        ByteArrayOutputStream errors = new ByteArrayOutputStream();
-        errorListener.setErrorOutput(new PrintStream(errors));
 
         // Create XSL source and set system id if this was used
         SAXSource xsl = new SAXSource(new InputSource(new StringReader(files.xsl)));
@@ -95,11 +97,14 @@ public class Application extends Controller {
             xsl.setSystemId(files.systemId);
         }
 
+        // Output for errors
+        ByteArrayOutputStream errors = new ByteArrayOutputStream();
+
         // Create a String writer for the transformation result
         StringWriter resultWriter = new StringWriter();
         try {
-            // Create a transformer
-            Transformer transformer = transformerFactory.newTransformer(xsl);
+            // Create a plugin
+            Transformer transformer = PLUGINS.get(files.engine).newTransformer(xsl, errors);
 
             // Create output source
             transformer.transform(new SAXSource(new InputSource(new StringReader(files.xml))), new StreamResult(resultWriter));
@@ -117,8 +122,8 @@ public class Application extends Controller {
         Transformer transformer;
         try {
             ByteArrayOutputStream pdf = new ByteArrayOutputStream();
-            Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, pdf);
-            transformer = transformerFactory.newTransformer();
+            Fop fop = FOP_FACTORY.newFop(MimeConstants.MIME_PDF, pdf);
+            transformer = PLUGINS.get("Saxon9").newTransformer();
             transformer.transform(new StreamSource(new StringReader(files.result)), new SAXResult(fop.getDefaultHandler()));
             return ok(pdf.toByteArray()).as("application/pdf");
         } catch (TransformerException e) {
@@ -138,7 +143,7 @@ public class Application extends Controller {
             f = Fiddle.getByShortId(files.id_slug);
         }
 
-        f.addRevision(files.xml, files.xsl);
+        f.addRevision(files.xml, files.xsl, files.engine);
 
         f.save();
         String[] res = new String[2];
@@ -167,6 +172,5 @@ public class Application extends Controller {
         List<Fiddle> fiddleList = Fiddle.find.all();
         return ok(list.render(fiddleList));
     }
-
 
 }

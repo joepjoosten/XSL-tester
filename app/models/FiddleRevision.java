@@ -15,6 +15,8 @@ public class FiddleRevision extends Model {
 
     private int revision;
 
+    private String engine;
+
     @ManyToOne
     private Fiddle fiddle;
 
@@ -36,6 +38,14 @@ public class FiddleRevision extends Model {
 
     public void setRevision(int revision) {
         this.revision = revision;
+    }
+
+    public String getEngine() {
+        return engine;
+    }
+
+    public void setEngine(String engine) {
+        this.engine = engine;
     }
 
     public String getXsl() {
