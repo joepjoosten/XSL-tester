@@ -1,4 +1,11 @@
-This is your new Play 2.1 application
-=====================================
+XSL Tester
+====================
 
-This file will be packaged with your application, when using `play dist`.
+Transform your XML with XSLT online
+
+Choose between the following engines:
+- Saxon 9.5.1.3 HE,
+- Saxon 6.5.5, or
+- Xalan 2.7.1
+
+A Demo is available on http://xsltransform.net
