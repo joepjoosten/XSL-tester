@@ -1,7 +1,10 @@
 package net.xsltransform.plugin;
 
+import play.Play;
+
 import javax.xml.transform.*;
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
@@ -13,8 +16,8 @@ public class Saxon6Plugin implements TransformerPlugin{
     private static final String STANDARD_ERROR_LISTENER_CLASS_NAME = "com.icl.saxon.StandardErrorListener";
     private static final String SET_ERROR_OUTPUT_METHOD = "setErrorOutput";
 
-    private static final ClassLoader saxon6ClassLoader = new URLClassLoader(new URL[]{
-            Saxon6Plugin.class.getClassLoader().getResource("public/external/saxon-6.5.5/saxon-6.5.5.jar")
+    private static final ClassLoader saxon6ClassLoader = new JarClassLoader(new InputStream[]{
+            Play.application().resourceAsStream("public/external/saxon-6.5.5/saxon-6.5.5.jar")
     }, Saxon6Plugin.class.getClassLoader());
 
 

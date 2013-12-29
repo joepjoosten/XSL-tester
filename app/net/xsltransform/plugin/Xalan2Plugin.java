@@ -1,9 +1,11 @@
 package net.xsltransform.plugin;
 
 import org.apache.xml.utils.ListingErrorHandler;
+import play.Play;
 
 import javax.xml.transform.*;
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
@@ -14,11 +16,11 @@ public class Xalan2Plugin implements TransformerPlugin{
 
     public static final String CLASS_NAME = "org.apache.xalan.processor.TransformerFactoryImpl";
 
-    private static final ClassLoader xalan2ClassLoader = new URLClassLoader(new URL[]{
-            Xalan2Plugin.class.getClassLoader().getResource("public/external/xalan-2.7.1/xalan.jar"),
-            Xalan2Plugin.class.getClassLoader().getResource("public/external/xalan-2.7.1/serializer.jar"),
-            Xalan2Plugin.class.getClassLoader().getResource("public/external/xalan-2.7.1/xercesImpl.jar"),
-            Xalan2Plugin.class.getClassLoader().getResource("public/external/xalan-2.7.1/xml-apis.jar")
+    private static final ClassLoader xalan2ClassLoader = new JarClassLoader(new InputStream[]{
+            Play.application().resourceAsStream("public/external/xalan-2.7.1/xalan.jar"),
+            Play.application().resourceAsStream("public/external/xalan-2.7.1/serializer.jar"),
+            Play.application().resourceAsStream("public/external/xalan-2.7.1/xercesImpl.jar"),
+            Play.application().resourceAsStream("public/external/xalan-2.7.1/xml-apis.jar")
     }, Xalan2Plugin.class.getClassLoader());
 
     @Override

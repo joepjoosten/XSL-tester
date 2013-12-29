@@ -1,10 +1,13 @@
 package net.xsltransform.plugin;
 
+import play.Play;
+
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
@@ -15,8 +18,8 @@ public class Saxon9Plugin implements TransformerPlugin{
     private static final String TRANSFORMER_FACTORY_CLASS_NAME = "net.sf.saxon.TransformerFactoryImpl";
 
 
-    private static final ClassLoader saxon9ClassLoader = new URLClassLoader(new URL[]{
-            Saxon9Plugin.class.getClassLoader().getResource("public/external/saxon-9.5.1.3-he/saxon-9.5.1.3-he.jar")
+    private static final ClassLoader saxon9ClassLoader = new JarClassLoader(new InputStream[]{
+            Play.application().resourceAsStream("public/external/saxon-9.5.1.3-he/saxon-9.5.1.3-he.jar")
     }, Saxon9Plugin.class.getClassLoader());
 
     @Override

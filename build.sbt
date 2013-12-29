@@ -12,8 +12,7 @@ libraryDependencies ++= Seq(
   "commons-codec" % "commons-codec" % "1.7",
   "org.apache.xmlgraphics" % "fop" % "1.1" excludeAll(
     ExclusionRule(organization = "org.apache.avalon.framework")
-    ),
-  "xalan" % "xalan" % "2.7.1"
+    )
 )     
 
 play.Project.playJavaSettings
