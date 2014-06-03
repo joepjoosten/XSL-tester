@@ -1,5 +1,7 @@
 [![Build Status](https://travis-ci.org/mmjmanders/XSL-tester.svg)](https://travis-ci.org/mmjmanders/XSL-tester)
 
+[![wercker status](https://app.wercker.com/status/2fd9ecc57029877eb703e65d9e1301dd/s "wercker status")](https://app.wercker.com/project/bykey/2fd9ecc57029877eb703e65d9e1301dd)
+
 # XSL Tester
 
 Transform your XML with XSLT online
