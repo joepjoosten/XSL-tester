@@ -1,0 +1,3 @@
+box: wercker/default@0.0.2
+services:
+  - alejandrito/play@1.1.1
