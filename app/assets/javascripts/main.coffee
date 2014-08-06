@@ -2,12 +2,83 @@ $ = jQuery
 doneTypingInterval = 1000;
 typingTimer = null;
 autotransform = true;
+
+analyzeResult = (data) ->
+  htmlRegex = XRegExp('^<!DOCTYPE (HTML|html).*?>', "s")
+  xmlRegex = XRegExp('<\?xml version="1\.0" encoding=".*?"\?>')
+
+  if htmlRegex.test(data)
+    htmlResult()
+  else if xmlRegex.test(data)
+    pdfNamespace = XRegExp('xmlns:(.*?)="http://www\.w3\.org/1999/XSL/Format"')
+    if pdfNamespace.test(data)
+      pdfRoot = new XRegExp("<" + XRegExp.exec(data, pdfNamespace)[1] + ":root .*?>", "s")
+      if pdfRoot.test(data)
+        pdfResult()
+      else
+        plainResult()
+    else
+      plainResult()
+  else
+    plainResult()
+
+pdfResult = () ->
+  resultButton("PDF")
+  if $('#resultview:visible').length > 0
+    pdfToIframe()
+
+htmlResult = () ->
+  resultButton("HTML")
+  if $('#resultview:visible').length > 0
+    htmlToIframe()
+
+plainResult = () ->
+  $('#viewButton').remove()
+  $('#resultview').hide()
+  $('#resulteditor').show()
+
+pdfToIframe = () ->
+  $('#files').submit()
+
+htmlToIframe = () ->
+  iframe = $('#resultview iframe').get(0)
+  iframedoc = iframe.document;
+  if (iframe.contentDocument)
+    iframedoc = iframe.contentDocument;
+  else if (iframe.contentWindow)
+    iframedoc = iframe.contentWindow.document;
+  iframedoc.open();
+  iframedoc.writeln($('#result').val());
+  iframedoc.close();
+
+resultButton = (resultType) ->
+  $('#viewButton').remove()
+  $('#result-window').append("<div id=\"viewButton\" class=\"label-view\" data-result-type=\"#{resultType}\">#{resultType}</div>")
+  if $('#resultview:visible').length > 0
+    $('#viewButton').addClass('active')
+
+$('#result-window').on 'click', '#viewButton', () ->
+  $('#resulteditor').hide()
+  $('#resultview').show()
+  $('#editorButton').removeClass('active')
+  $('#viewButton').addClass('active')
+  switch $(this).data('result-type')
+    when 'PDF' then pdfToIframe()
+    when 'HTML' then htmlToIframe()
+
+$('#result-window').on 'click', '#editorButton', () ->
+  $('#resultview').hide()
+  $('#resulteditor').show()
+  $('#editorButton').addClass('active')
+  $('#viewButton').removeClass('active')
+
 transform = () ->
   jsRoutes.controllers.Application.transform().ajax(
     data: $("#files").serialize()
     success: (data) ->
       resulteditor.getSession().setValue data
       $("#result").val resulteditor.getSession().getValue()
+      analyzeResult(data)
     error: (err) ->
       console.log "error: " + err
   )

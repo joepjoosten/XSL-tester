@@ -1,11 +1,7 @@
 package controllers;
 
 import models.Fiddle;
-import models.FiddleRevision;
-import net.xsltransform.plugin.Saxon6Plugin;
-import net.xsltransform.plugin.TransformerPlugin;
-import net.xsltransform.plugin.Saxon9Plugin;
-import net.xsltransform.plugin.Xalan2Plugin;
+import net.xsltransform.plugin.*;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
@@ -41,7 +37,8 @@ public class Application extends Controller {
     private static final Map<String, TransformerPlugin> PLUGINS;
     static {
         PLUGINS = new HashMap<>();
-        PLUGINS.put("Saxon9", new Saxon9Plugin());
+        PLUGINS.put("Saxon9", new Saxon9HEPlugin());
+        PLUGINS.put("Saxon9EE", new Saxon9EEPlugin());
         PLUGINS.put("Saxon6", new Saxon6Plugin());
         PLUGINS.put("Xalan2", new Xalan2Plugin());
     }

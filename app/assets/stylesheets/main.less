@@ -1,4 +1,5 @@
 @import "utils/_flexbox.less";
+@import "utils/_boostrap-override.less";
 
 html {
   width: 100%;
@@ -24,10 +25,7 @@ a {
   z-index: 1000;
   top: 0;
   margin-bottom: 5px;
-
-  .navbar-inner {
-    border-radius: 0;
-  }
+  border-radius: 0;
 }
 
 @media screen and (min-width: 0px) and (max-width:1023px) {
@@ -55,7 +53,7 @@ a {
   }
 }
 
-#xmleditor, #xsleditor, #resulteditor {
+#xmleditor, #xsleditor, #result-window {
   position: relative;
   box-sizing:border-box;
   -o-box-sizing:border-box;
@@ -70,7 +68,7 @@ a {
   z-index: 100;
   right: 14px;
   top: 20px;
-  background-color: rgba(255, 255, 255, 0.5);
+  background-color: rgba(150,150,150,0.5);
   padding: 1em;
 }
 
@@ -82,24 +80,62 @@ a {
   .hover-label("XSL");
 }
 
-#resulteditor:after {
-  .hover-label("Result");
-}
-
 body div:last-child {
   border-bottom: none !important;
   border-right: none !important;
 }
 
+#result-window {
+  #resulteditor {
+    height: 100%;
+  }
+
+  #resultview {
+    width: 100%;
+    height: 100%;
+
+    iframe {
+      background-color: white;
+      border: none;
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  .label-editor, .label-view {
+    color: #ddd;
+    position:absolute;
+    padding: 1em;
+    background-color: rgba(150,150,150,0.5);
+    z-index:100;
+    right: 14px;
+    &:hover {
+      cursor: pointer;
+    }
+
+    &.active {
+      color: #fff;
+      background-color: rgba(150,150,150,0.8);
+    }
+  }
+
+  .label-editor {
+    top: 20px;
+  }
+  .label-view {
+    top: 80px;
+  }
+}
+
 @media screen and (min-width: 0px) and (max-width:1199px) {
 
-  #xmleditor, #xsleditor, #resulteditor {
+  #xmleditor, #xsleditor, #result-window {
     width: 100%;
     border-bottom: 2px solid #F8F8F2;
     height: 33.3%;
   }
 
-  #resulteditor {
+  #result-window {
     border-bottom: none;
   }
 }
@@ -115,7 +151,7 @@ body div:last-child {
     border-right: 2px solid #F8F8F2;
   }
 
-  #resulteditor{
+  #result-window{
     width: 50%;
     height: 50%;
     position: absolute;
