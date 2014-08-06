@@ -1,6 +1,6 @@
 name := "test"
 
-version := "1.1-SNAPSHOT"
+version := "1.2"
 
 libraryDependencies ++= Seq(
   javaJdbc,
@@ -13,6 +13,6 @@ libraryDependencies ++= Seq(
   "org.apache.xmlgraphics" % "fop" % "1.1" excludeAll(
     ExclusionRule(organization = "org.apache.avalon.framework")
     )
-)     
+)
 
 play.Project.playJavaSettings

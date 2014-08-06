@@ -12,12 +12,14 @@ import java.net.URLClassLoader;
 
 public class Saxon6Plugin implements TransformerPlugin{
 
+    private static final String VERSION = "saxon-6.5.5";
+
     private static final String TRANSFORMER_FACTORY_CLASS_NAME = "com.icl.saxon.TransformerFactoryImpl";
     private static final String STANDARD_ERROR_LISTENER_CLASS_NAME = "com.icl.saxon.StandardErrorListener";
     private static final String SET_ERROR_OUTPUT_METHOD = "setErrorOutput";
 
     private static final ClassLoader saxon6ClassLoader = new JarClassLoader(new InputStream[]{
-            Play.application().resourceAsStream("public/plugins/saxon-6.5.5/saxon-6.5.5.jar")
+            Play.application().resourceAsStream("public/plugins/"+VERSION+"/"+VERSION+".jar")
     }, Saxon6Plugin.class.getClassLoader());
 
 

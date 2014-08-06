@@ -13,11 +13,12 @@ import java.lang.reflect.InvocationTargetException;
 
 public class Saxon9EEPlugin implements TransformerPlugin{
 
+    private static final String VERSION = "saxon-9.5.1.6-ee";
+
     private static final String TRANSFORMER_FACTORY_CLASS_NAME = "net.sf.saxon.TransformerFactoryImpl";
 
-
     private static final ClassLoader saxon9EEClassLoader = new JarClassLoader(new InputStream[]{
-            Play.application().resourceAsStream("public/plugins/saxon-9.5.1.3-ee/saxon-9.5.1.3-ee.jar")
+            Play.application().resourceAsStream("public/plugins/"+VERSION+"/"+VERSION+".jar")
     }, Saxon9EEPlugin.class.getClassLoader());
 
     @Override

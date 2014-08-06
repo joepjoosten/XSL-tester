@@ -14,13 +14,15 @@ import java.net.URLClassLoader;
 
 public class Xalan2Plugin implements TransformerPlugin{
 
+    private static final String VERSION = "xalan-2.7.1";
+
     public static final String CLASS_NAME = "org.apache.xalan.processor.TransformerFactoryImpl";
 
     private static final ClassLoader xalan2ClassLoader = new JarClassLoader(new InputStream[]{
-            Play.application().resourceAsStream("public/plugins/xalan-2.7.1/xalan.jar"),
-            Play.application().resourceAsStream("public/plugins/xalan-2.7.1/serializer.jar"),
-            Play.application().resourceAsStream("public/plugins/xalan-2.7.1/xercesImpl.jar"),
-            Play.application().resourceAsStream("public/plugins/xalan-2.7.1/xml-apis.jar")
+            Play.application().resourceAsStream("public/plugins/"+VERSION+"/xalan.jar"),
+            Play.application().resourceAsStream("public/plugins/"+VERSION+"/serializer.jar"),
+            Play.application().resourceAsStream("public/plugins/"+VERSION+"/xercesImpl.jar"),
+            Play.application().resourceAsStream("public/plugins/"+VERSION+"/xml-apis.jar")
     }, Xalan2Plugin.class.getClassLoader());
 
     @Override
