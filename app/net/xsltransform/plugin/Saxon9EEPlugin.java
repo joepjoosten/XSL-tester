@@ -38,6 +38,7 @@ public class Saxon9EEPlugin implements TransformerPlugin{
 
             Object conf = transformerFactory.getAttribute((String)FeatureKeysClass.getField("CONFIGURATION").get(null));
             ConfigurationClass.getMethod("setConfigurationProperty", String.class, Object.class).invoke(conf, "http://saxon.sf.net/feature/allow-external-functions", false);
+            ConfigurationClass.getMethod("setConfigurationProperty", String.class, Object.class).invoke(conf, "http://saxon.sf.net/feature/generateByteCode", false);
             Object errorListener = ConfigurationClass.getMethod("getErrorListener").invoke(conf);
             StandardErrorListenerClass.getMethod("setErrorOutput", PrintStream.class).invoke(errorListener, new PrintStream(errors));
 

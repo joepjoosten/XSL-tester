@@ -1,17 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" font-family="sans-serif" font-size="10pt">
-    <fo:layout-master-set>
-        <fo:simple-page-master master-name="portrait" page-width="210mm" page-height="297mm" margin-left="25mm"
-                               margin-right="25mm" margin-top="10mm" margin-bottom="10mm">
-            <fo:region-body region-name="body" margin-top="25mm" margin-bottom="25mm"/>
-        </fo:simple-page-master>
-    </fo:layout-master-set>
-
-    <fo:page-sequence master-reference="portrait">
-        <fo:flow flow-name="body">
-            <fo:block>
-                Hello transformers!
-            </fo:block>
-        </fo:flow>
-    </fo:page-sequence>
-</fo:root>
+<body>
+    <h1>A new version of xsltransform.net is released!</h1>
+    <p>We have added the following new features:</p>
+    <ul>
+        <li>A new XSLT engine is added: Saxon 9.5 EE, with a license (thank you Michael Kay!)</li>
+        <li>XSLT 3.0 support when using the new Saxon 9.5 EE engine!</li>
+        <li>Preview your result as HTML when doctype is set to HTML (see this example)</li>
+        <li>Preview your result as PDF when doctype is set to XML and your document starts with root element of XSL-FO. Apache FOP is used to generate the PDF</li>
+        <li>Added some links to useful XSLT sites</li>
+    </ul>
+</body>
