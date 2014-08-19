@@ -3,12 +3,12 @@
     <xsl:output method="html" doctype-public="XSLT-compat" omit-xml-declaration="yes" encoding="UTF-8" indent="yes" />
 
     <xsl:template match="/">
-      <hmtl>
+      <html>
         <head>
           <title>New Version!</title>
         </head>
         <xsl:apply-templates/>
-      </hmtl>
+      </html>
     </xsl:template>
 
     <xsl:template match="@@*|node()">
