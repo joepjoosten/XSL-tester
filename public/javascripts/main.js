@@ -264,6 +264,47 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // Download button
+    document.querySelector('#download').addEventListener('click', (e) => {
+        e.preventDefault();
+        const formData = new FormData(document.querySelector('#files'));
+
+        fetch('/download', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.text().then(text => { throw new Error(text); });
+            }
+            // Get filename from Content-Disposition header
+            const contentDisposition = response.headers.get('Content-Disposition');
+            let filename = 'result.txt';
+            if (contentDisposition) {
+                const match = contentDisposition.match(/filename="(.+)"/);
+                if (match) {
+                    filename = match[1];
+                }
+            }
+            return response.blob().then(blob => ({ blob, filename }));
+        })
+        .then(({ blob, filename }) => {
+            // Create download link
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        })
+        .catch(error => {
+            console.error('Download error:', error);
+            showAlert('Download Error', error.message);
+        });
+    });
+
     // Engine selection
     document.querySelectorAll('#engines a').forEach(link => {
         link.addEventListener('click', (e) => {

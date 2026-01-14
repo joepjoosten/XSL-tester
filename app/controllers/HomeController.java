@@ -31,6 +31,11 @@ import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -138,6 +143,117 @@ public class HomeController extends Controller {
         } catch (TransformerException | FOPException e) {
             return badRequest("Error rendering PDF: " + e.getMessage());
         }
+    }
+
+    public Result download(Http.Request request) {
+        DynamicForm form = formFactory.form().bindFromRequest(request);
+        String xml = form.get("xml");
+        String xsl = form.get("xsl");
+        String systemId = form.get("systemId");
+        String engine = form.get("engine");
+
+        if (engine == null || !plugins.containsKey(engine)) {
+            engine = DEFAULT_ENGINE;
+        }
+
+        // Extract media-type and method from xsl:output
+        String mediaType = "text/plain";
+        String method = "xml";
+        try {
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            dbFactory.setNamespaceAware(true);
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            Document doc = dBuilder.parse(new InputSource(new StringReader(xsl)));
+
+            NodeList outputNodes = doc.getElementsByTagNameNS("http://www.w3.org/1999/XSL/Transform", "output");
+            if (outputNodes.getLength() > 0) {
+                Element outputElement = (Element) outputNodes.item(0);
+                String mt = outputElement.getAttribute("media-type");
+                if (mt != null && !mt.isEmpty()) {
+                    mediaType = mt;
+                }
+                String m = outputElement.getAttribute("method");
+                if (m != null && !m.isEmpty()) {
+                    method = m;
+                }
+            }
+        } catch (Exception e) {
+            // If parsing fails, use defaults based on content analysis
+        }
+
+        // If no explicit media-type, derive from method
+        if (mediaType.equals("text/plain")) {
+            mediaType = getMediaTypeFromMethod(method);
+        }
+
+        // Determine file extension
+        String extension = getExtensionFromMediaType(mediaType, method);
+
+        SAXSource xslSource = new SAXSource(new InputSource(new StringReader(xsl)));
+        if (systemId != null && !systemId.isEmpty()) {
+            xslSource.setSystemId(systemId);
+        }
+
+        ByteArrayOutputStream errors = new ByteArrayOutputStream();
+        StringWriter resultWriter = new StringWriter();
+
+        try {
+            Transformer transformer = plugins.get(engine).newTransformer(xslSource, errors);
+            transformer.transform(
+                    new SAXSource(new InputSource(new StringReader(xml))),
+                    new StreamResult(resultWriter)
+            );
+        } catch (TransformerException e) {
+            String errorOutput = errors.toString();
+            if (errorOutput.isEmpty()) {
+                errorOutput = e.getMessage();
+            }
+            return badRequest("Transform error: " + errorOutput);
+        }
+
+        String filename = "result" + extension;
+        return ok(resultWriter.toString())
+                .as(mediaType)
+                .withHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
+    }
+
+    private String getMediaTypeFromMethod(String method) {
+        return switch (method.toLowerCase()) {
+            case "html" -> "text/html";
+            case "xhtml" -> "application/xhtml+xml";
+            case "xml" -> "application/xml";
+            case "text" -> "text/plain";
+            case "json" -> "application/json";
+            default -> "text/plain";
+        };
+    }
+
+    private String getExtensionFromMediaType(String mediaType, String method) {
+        // First try to get extension from media-type
+        String ext = switch (mediaType.toLowerCase()) {
+            case "text/html", "application/xhtml+xml" -> ".html";
+            case "application/xml", "text/xml" -> ".xml";
+            case "application/json" -> ".json";
+            case "text/css" -> ".css";
+            case "text/javascript", "application/javascript" -> ".js";
+            case "text/csv" -> ".csv";
+            case "application/pdf" -> ".pdf";
+            case "image/svg+xml" -> ".svg";
+            default -> null;
+        };
+
+        // If no match from media-type, use method
+        if (ext == null) {
+            ext = switch (method.toLowerCase()) {
+                case "html", "xhtml" -> ".html";
+                case "xml" -> ".xml";
+                case "json" -> ".json";
+                case "text" -> ".txt";
+                default -> ".txt";
+            };
+        }
+
+        return ext;
     }
 
     public Result save(Http.Request request) {

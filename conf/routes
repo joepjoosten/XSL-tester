@@ -9,6 +9,7 @@ POST    /                           controllers.HomeController.transform(request
 GET     /list                       controllers.HomeController.list(request: Request)
 POST    /save                       controllers.HomeController.save(request: Request)
 POST    /pdf                        controllers.HomeController.pdf(request: Request)
+POST    /download                   controllers.HomeController.download(request: Request)
 
 # JavaScript routes
 GET     /jsRoutes                   controllers.HomeController.jsRoutes(request: Request)
