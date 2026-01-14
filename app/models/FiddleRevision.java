@@ -1,42 +1,55 @@
 package models;
 
-import play.db.ebean.Model;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import jakarta.persistence.*;
 
 @Entity
-public class FiddleRevision extends Model {
+@Table(name = "fiddle_revision")
+public class FiddleRevision {
 
     @Id
-    private long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    private int revision;
-
-    private String engine;
-
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fiddle_id", nullable = false)
     private Fiddle fiddle;
+
+    @Column(nullable = false)
+    private Integer revision;
+
+    @Column(length = 50)
+    private String engine;
 
     @Column(columnDefinition = "TEXT")
     private String xml;
+
     @Column(columnDefinition = "TEXT")
     private String xsl;
 
     public FiddleRevision() {
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public int getRevision() {
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Fiddle getFiddle() {
+        return fiddle;
+    }
+
+    public void setFiddle(Fiddle fiddle) {
+        this.fiddle = fiddle;
+    }
+
+    public Integer getRevision() {
         return revision;
     }
 
-    public void setRevision(int revision) {
+    public void setRevision(Integer revision) {
         this.revision = revision;
     }
 
@@ -48,14 +61,6 @@ public class FiddleRevision extends Model {
         this.engine = engine;
     }
 
-    public String getXsl() {
-        return xsl;
-    }
-
-    public void setXsl(String xsl) {
-        this.xsl = xsl;
-    }
-
     public String getXml() {
         return xml;
     }
@@ -64,6 +69,11 @@ public class FiddleRevision extends Model {
         this.xml = xml;
     }
 
-    public static Finder<String, FiddleRevision> find = new Finder(String.class, FiddleRevision.class);
+    public String getXsl() {
+        return xsl;
+    }
 
+    public void setXsl(String xsl) {
+        this.xsl = xsl;
+    }
 }

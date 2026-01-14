@@ -1,0 +1,47 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    ports:
+      - "9000:9000"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - DB_URL=jdbc:mariadb://db:3306/fiddles
+      - DB_USER=xsltester
+      - DB_PASSWORD=xsltester
+    command: ["bin/xsl-tester", "-Dplay.http.secret.key=dK4pPxT8vQnZ2mYwL9sR7jH5fG3bN1cX0aE6iU4oW8qV2tS9yM7zP5kJ3hF1gD0c"]
+    networks:
+      - xsltester-network
+    restart: unless-stopped
+
+  db:
+    image: mariadb:11
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_DATABASE=fiddles
+      - MYSQL_USER=xsltester
+      - MYSQL_PASSWORD=xsltester
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    ports:
+      - "3306:3306"
+    networks:
+      - xsltester-network
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 10s
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+
+networks:
+  xsltester-network:
+    driver: bridge
+
+volumes:
+  db_data:

@@ -1,19 +1,25 @@
-@(fiddles: List[Fiddle])
+@(fiddles: java.util.List[models.Fiddle])(implicit request: Http.Request)
+@import scala.jdk.CollectionConverters._
 
-    <ul>
-    @fiddles.map {f =>
-    <li>
-         @f.getShortId
-        <ul>
-            <li>Revisions</li>
-            @f.getFiddleRevisionList.map {r =>
-                <li>
-                    <a href="@routes.Application.fiddle(f.getShortId, r.getRevision)"> @r.getRevision </a>
-                </li>
-            }
+@main("XSL Transform - Fiddles") {
+    <div class="container mt-4">
+        <h2>Saved Fiddles</h2>
+        <ul class="list-group">
+        @for(fiddle <- fiddles.asScala) {
+            <li class="list-group-item">
+                <strong>@fiddle.getShortId</strong>
+                <ul class="list-unstyled ms-3 mt-2">
+                    <li><em>Revisions:</em></li>
+                    @for(rev <- fiddle.getRevisions.asScala) {
+                        <li>
+                            <a href="@routes.HomeController.fiddleWithRevision(fiddle.getShortId, rev.getRevision)">
+                                Revision @rev.getRevision (@rev.getEngine)
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </li>
+        }
         </ul>
-
-    </li>
-    }
-    </ul>
-
+    </div>
+}

@@ -1,18 +1,25 @@
-name := "test"
+name := "xsl-tester"
+organization := "net.xsltransform"
+version := "2.0.0"
 
-version := "1.2.4"
+lazy val root = (project in file("."))
+  .enablePlugins(PlayJava)
+
+scalaVersion := "2.13.14"
 
 libraryDependencies ++= Seq(
-  javaJdbc,
-  javaEbean,
-  cache,
-  "mysql" % "mysql-connector-java" % "5.1.18",
-  "avalon-framework" % "avalon-framework-api" % "4.2.0",
-  "avalon-framework" % "avalon-framework-impl" % "4.2.0",
-  "commons-codec" % "commons-codec" % "1.7",
-  "org.apache.xmlgraphics" % "fop" % "1.1" excludeAll(
-    ExclusionRule(organization = "org.apache.avalon.framework")
-    )
+  guice,
+  javaJpa,
+  "org.hibernate.orm" % "hibernate-core" % "6.4.4.Final",
+  "org.mariadb.jdbc" % "mariadb-java-client" % "3.3.3",
+  "org.apache.xmlgraphics" % "fop" % "2.11",
+  "commons-codec" % "commons-codec" % "1.16.1",
+  "net.sf.saxon" % "Saxon-HE" % "12.5",
+  "xalan" % "xalan" % "2.7.3"
 )
 
-play.Project.playJavaSettings
+// Ensure persistence.xml is not externalized
+PlayKeys.externalizeResourcesExcludes += baseDirectory.value / "conf" / "META-INF" / "persistence.xml"
+
+// Java 21
+javacOptions ++= Seq("-source", "21", "-target", "21")

@@ -1,16 +1,29 @@
-logs
-project/project
-project/target
-target
-tmp
+# sbt / Play
+target/
+project/target/
+project/project/
+logs/
+tmp/
+dist/
+RUNNING_PID
 .history
-dist
-/.idea
-/*.iml
-/out
-/.idea_modules
-/.classpath
-/.project
-/RUNNING_PID
-/.settings
+
+# IDE
+.idea/
+.idea_modules/
+*.iml
+.vscode/
+.classpath
+.project
+.settings/
+out/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets
 *.lic
+.env

@@ -1,28 +1,25 @@
 # Routes
 # This file defines all application routes (Higher priority routes first)
-# ~~~~
 
-# Home page
+# Home page and transform
+GET     /                           controllers.HomeController.index(request: Request)
+POST    /                           controllers.HomeController.transform(request: Request)
 
-GET     /                               controllers.Application.index()
-POST    /                               controllers.Application.transform()
-GET     /list                           controllers.Application.list()
-POST    /pdf                            controllers.Application.pdf()
-POST    /save                           controllers.Application.save()
+# Fiddle operations
+GET     /list                       controllers.HomeController.list(request: Request)
+POST    /save                       controllers.HomeController.save(request: Request)
+POST    /pdf                        controllers.HomeController.pdf(request: Request)
+
+# JavaScript routes
+GET     /jsRoutes                   controllers.HomeController.jsRoutes(request: Request)
+
+# Get XML/XSL by ID
+GET     /xml/:id                    controllers.HomeController.xml(request: Request, id: String, revision: Int ?= 1)
+GET     /xsl/:id                    controllers.HomeController.xsl(request: Request, id: String, revision: Int ?= 1)
+
+# Load fiddle by short ID
+GET     /:id                        controllers.HomeController.fiddle(request: Request, id: String, revision: Int ?= 1)
+GET     /:id/:revision              controllers.HomeController.fiddleWithRevision(request: Request, id: String, revision: Int)
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file                   controllers.Assets.at(path="/public", file)
-
-GET     /jsRoutes                       controllers.Application.jsRoutes()
-GET     /xml/:id                        controllers.Application.xml(id, revision:Int = 0)
-GET     /xml/:id/:revision              controllers.Application.xml(id, revision:Int)
-GET     /xsl/:id                        controllers.Application.xsl(id, revision:Int = 0)
-GET     /xsl/:id/:revision              controllers.Application.xsl(id, revision:Int)
-GET     /xml                            controllers.Application.defaultXML()
-GET     /xsl                            controllers.Application.defaultXSL()
-
-GET     /:id                          controllers.Application.fiddle(id, revision:Int = 0)
-GET     /:id/:revision                controllers.Application.fiddle(id, revision:Int)
-
-
-
+GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
